@@ -4,7 +4,7 @@ on:
     inputs:
       path_to_dockerfile:
         description: Path to the dockerfile (default = 'Dockerfile')
-        default: "Dockerfile"
+        default: "image/Dockerfile"
         type: string
       docker_build_dir:
         description: Docker build directory (default = '.')
@@ -16,7 +16,7 @@ on:
         default: snapshot-artifact
       lifecycle_policy_file:
         description: Path to the lifecycle policy JSON file (default = 'policy.json')
-        default: "e2e-test/policy.json"
+        default: "image/policy.json"
         type: string
       github_iam_role:
         description: Name of the IAM Role for adding access to ECR repo
