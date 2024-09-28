@@ -1,22 +1,22 @@
-name: Docker image build and publish
+name: Build Third-Party-Sync Container Image
 on:
   workflow_dispatch:
     inputs:
       path_to_dockerfile:
         description: Path to the dockerfile (default = 'Dockerfile')
-        default: "image/Dockerfile"
+        default: "third-party-sync/image/Dockerfile"
         type: string
       docker_build_dir:
         description: Docker build directory (default = '.')
-        default: "image"
+        default: "third-party-sync/image"
         type: string
       image_tag:
         description: Tag to apply to images.
         type: string
-        default: snapshot-artifact
+        default: third-party-sync
       lifecycle_policy_file:
         description: Path to the lifecycle policy JSON file (default = 'policy.json')
-        default: "image/policy.json"
+        default: "third-party-sync/image/policy.json"
         type: string
       github_iam_role:
         description: Name of the IAM Role for adding access to ECR repo
