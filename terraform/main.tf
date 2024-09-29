@@ -153,7 +153,7 @@ resource "aws_iam_role_policy_attachment" "third_party_api" {
 }
 
 resource "aws_lambda_function" "third_party_api" {
-  function_name    = "python_container_lambda"
+  function_name    = "stocks_third_party_api"
   role             = aws_iam_role.lambda_exec_role.arn
   package_type     = "Image"
   image_uri        = data.aws_ecr_image.third_party_api.image_uri

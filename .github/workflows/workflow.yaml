@@ -93,7 +93,7 @@ jobs:
 
       - name: Update AWS Lambda with new image
         env:
-          LAMBDA_FUNCTION_NAME: "python_container_lambda"
+          LAMBDA_FUNCTION_NAME: "stocks_third_party_api"
           ECR_IMAGE_URI: "015059194123.dkr.ecr.us-east-1.amazonaws.com/personal/test:third-party-sync"
         run: |
           aws lambda update-function-code \
