@@ -78,6 +78,10 @@ jobs:
   update-lambda:
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write
+      contents: read
+
     needs: docker
 
     steps:
