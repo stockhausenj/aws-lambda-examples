@@ -23,13 +23,13 @@ def get_secret(secret_name):
         raise e
 
 def handler(event, context):
-  alpha_vantage_api_key = get_secret('third_party_api_key')
+  alpha_vantage_api_key = get_secret(os.getenv('THIRD_PARTY_API_KEY_ARN'))
 
   conn = psycopg2.connect(
     host=os.getenv('RDS_HOST'),
     database=os.getenv('RDS_DATABASE'),
     user=os.getenv('RDS_USER'),
-    password=get_secret('db_access')
+    password=get_secret(os.getenv('RDS_PASSWORD_ARN'))
 	)
 
   current_timestamp = datetime.utcnow()

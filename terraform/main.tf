@@ -162,9 +162,11 @@ resource "aws_lambda_function" "third_party_api" {
 
   environment {
     variables = {
-      RDS_HOST     = aws_db_instance.stocks.address
-      RDS_DATABASE = aws_db_instance.stocks.db_name
-      RDS_USER     = aws_db_instance.stocks.username
+      RDS_HOST                = aws_db_instance.stocks.address
+      RDS_DATABASE            = aws_db_instance.stocks.db_name
+      RDS_USER                = aws_db_instance.stocks.username
+      RDS_PASSWORD_ARN        = aws_secretsmanager_secret.db_access.arn 
+      THIRD_PARTY_API_KEY_ARN = aws_secretsmanager_secret.third_party_api.arn
     }
   }
 }
