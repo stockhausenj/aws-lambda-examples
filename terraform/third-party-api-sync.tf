@@ -26,7 +26,7 @@ resource "aws_iam_role_policy_attachment" "third_party_api_sync_basic_exec" {
 }
 
 resource "aws_iam_policy" "third_party_api_sync" {
-  name        = "LambdaSecretsAccessPolicy"
+  name        = "stocks_third_party_api_sync"
   description = "IAM policy for accessing secrets in AWS Secrets Manager"
   
   policy = jsonencode({
