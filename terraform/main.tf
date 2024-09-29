@@ -70,3 +70,21 @@ resource "aws_db_instance" "stocks" {
     Name = "stocks"
   }
 }
+
+resource "aws_secretsmanager_secret" "db_access" {
+  name = "db_access"
+}
+
+resource "aws_secretsmanager_secret_version" "db_access_pw" {
+  secret_id     = aws_secretsmanager_secret.db_access.id
+  secret_string = var.stock_db_pw
+}
+
+resource "aws_secretsmanager_secret" "third_party_api" {
+  name = "third_party_api"
+}
+
+resource "aws_secretsmanager_secret_version" "third_party_api_key" {
+  secret_id     = aws_secretsmanager_secret.third_party_api.id
+  secret_string = var.third_party_api_key
+}

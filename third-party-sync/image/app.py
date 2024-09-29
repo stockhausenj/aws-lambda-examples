@@ -14,7 +14,7 @@ conn = psycopg2.connect(
 )
 
 ALPHA_VANTAGE_API_KEY = os.getenv('ALPHA_VANTAGE_API_KEY')
-STOCK_SYMBOLS = ['IBM', 'AAPL', 'GOOGL']  # Add more symbols as needed
+STOCK_SYMBOLS = ['AAPL', 'AI', 'AMD', 'AMZN', 'DNA', 'INTC', 'LCID', 'META', 'MSFT', 'MU', 'NET', 'NVDA', 'OKTA', 'RIVN', 'SOFI', 'TSLA', 'UBER']
 
 def handler(event, context):
   current_timestamp = datetime.utcnow()
@@ -23,13 +23,11 @@ def handler(event, context):
     response = requests.get(url)
     data = response.json()
 
-    # Check if the response contains the expected data
     if "Time Series (1min)" in data:
-      # Step 2: Parse the stock price (latest available data)
+      # Parse the stock price (latest available data)
       latest_timestamp = list(data['Time Series (1min)'].keys())[0]
       latest_price = data['Time Series (1min)'][latest_timestamp]['1. open']
 
-      # Step 3: Insert or update the stock price in the PostgreSQL database
       with conn.cursor() as cur:
         cur.execute("""
           INSERT INTO stocks (symbol, price, timestamp)
