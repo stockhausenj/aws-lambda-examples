@@ -70,6 +70,32 @@ resource "aws_lambda_function" "stock" {
     }
   }
 }
+
+resource "aws_apigatewayv2_integration" "stock" {
+  api_id                 = aws_apigatewayv2_api.stocks.id
+  integration_type       = "AWS_PROXY"
+  integration_uri        = aws_lambda_function.stock.invoke_arn
+  payload_format_version = "2.0"
+}
+
+resource "aws_apigatewayv2_route" "stock" {
+  api_id    = aws_apigatewayv2_api.api.id
+  route_key = "GET /stock"
+
+  target = "integrations/${aws_apigatewayv2_integration.stock.id}"
+}
+
+resource "aws_apigatewayv2_stage" "stock" {
+  api_id      = aws_apigatewayv2_api.stock.id
+  name        = "dev"
+  auto_deploy = true
+}
+
+resource "aws_lambda_permission" "stock" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.stock.function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.stock.execution_arn}/*/*"
+}
 */
-
-
