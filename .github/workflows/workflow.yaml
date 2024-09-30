@@ -19,6 +19,7 @@ jobs:
       id-token: write
       contents: read
 
+
   third-party-api-sync-image:
     uses: ./.github/workflows/image-build.yaml
     with:
@@ -31,6 +32,22 @@ jobs:
     permissions:
       id-token: write
       contents: read
+
+
+  update-stock-lambda:
+    needs: stock-image
+
+    uses: ./.github/workflows/update-lambda.yaml
+    with:
+      aws_account_id: "015059194123"
+      aws_region: "us-east-1"
+      image_tag: "stock"
+      lambda_function_name: "stock"
+
+    permissions:
+      id-token: write
+      contents: read
+
 
   update-third-party-api-sync-lambda:
     needs: third-party-api-sync-image
