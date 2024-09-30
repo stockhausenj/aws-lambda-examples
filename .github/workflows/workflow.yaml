@@ -40,7 +40,7 @@ jobs:
       aws_account_id: "015059194123"
       aws_region: "us-east-1"
       image_tag: "third-party-sync"
-      lambda_function_name: "stocks_third_party_api"
+      lambda_function_name: "stocks_third_party_api_sync"
 
     permissions:
       id-token: write
