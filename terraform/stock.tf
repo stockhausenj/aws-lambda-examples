@@ -47,7 +47,7 @@ resource "aws_iam_policy" "stock" {
 
 resource "aws_iam_role_policy_attachment" "stock" {
   role       = aws_iam_role.stock.name
-  policy_arn = aws_iam_policy.third_party_api_sync.arn
+  policy_arn = aws_iam_policy.stock.arn
 }
 
 resource "aws_lambda_function" "stock" {
