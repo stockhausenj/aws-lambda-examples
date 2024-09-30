@@ -73,7 +73,7 @@ resource "aws_lambda_function" "third_party_api_sync" {
 resource "aws_cloudwatch_event_rule" "third_party_api_sync" {
   name                = "third_party_api_sync_cron_schedule"
   description         = "Run Lambda every hour Monday-Friday"
-  schedule_expression = "cron(0 * ? * 2-6 *)"  # Cron expression for Monday-Friday, every hour
+  schedule_expression = "cron(0 14-20 ? * MON-FRI *)" # Try to match stock market hours. Which is 9:30 AM to 4:00 PM ET.
 }
 
 resource "aws_lambda_permission" "cloudwatch_third_party_api_sync" {
