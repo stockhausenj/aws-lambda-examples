@@ -45,7 +45,7 @@ jobs:
       aws_account_id: $AWS_ACCOUNT_ID
       aws_region: $AWS_REGION
       image_tag: "third-party-sync"
-      lambda_function__name: "stocks_third_party_api"
+      lambda_function_name: "stocks_third_party_api"
 
     permissions:
       id-token: write
