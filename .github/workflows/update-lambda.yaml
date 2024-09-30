@@ -20,23 +20,17 @@ jobs:
   update-lambda:
     runs-on: ubuntu-latest
 
-    env:
-      AWS_ACCOUNT_ID: ${{ inputs.aws_account_id }}
-      AWS_REGION: ${{ inputs.aws_region }}
-      IMAGE_TAG: ${{ inputs.image_tag }}
-      LAMBDA_FUNCTION_NAME: ${{ inputs.lambda_function_name }}
-
     steps:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::$AWS_ACCOUNT_ID:role/GitHubActionsRole
-          aws-region: $AWS_REGION
+          role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/GitHubActionsRole
+          aws-region: ${{ inputs.aws_region }}
 
       - name: Update AWS Lambda with new image
         env:
-          ECR_IMAGE_URI: "015059194123.dkr.ecr.us-east-1.amazonaws.com/personal/test:$IMAGE_TAG"
+          ECR_IMAGE_URI: "015059194123.dkr.ecr.us-east-1.amazonaws.com/personal/test:${{ inputs.image_tag }}"
         run: |
           aws lambda update-function-code \
-            --function-name $LAMBDA_FUNCTION_NAME \
+            --function-name ${{ inputs.lambda_function_name }} \
             --image-uri $ECR_IMAGE_URI
