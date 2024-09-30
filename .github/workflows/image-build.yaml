@@ -14,7 +14,7 @@ on:
       image_tag:
         required: true
         type: string
-      ecr_repoistory:
+      ecr_repository:
         required: true
         type: string
 
@@ -31,7 +31,7 @@ jobs:
       AWS_REGION: ${{ inputs.aws_region }}
       DOCKER_BUILD_DIR: ${{ inputs.docker_build_dir }}
       IMAGE_TAG: ${{ inputs.image_tag }}
-      ECR_REPOSITORY: ${{ inputs.ecr_repoistory }}
+      ECR_REPOSITORY: ${{ inputs.ecr_repository }}
 
     steps:
       - uses: actions/checkout@v3
