@@ -83,6 +83,10 @@ resource "aws_apigatewayv2_stage" "stock" {
   api_id      = aws_apigatewayv2_api.stocks.id
   name        = "dev"
   auto_deploy = true
+
+  route_settings = {
+    throttling_rate_limit = 1 # RPS
+  }
 }
 
 resource "aws_lambda_permission" "stock" {
