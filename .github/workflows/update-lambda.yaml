@@ -20,10 +20,6 @@ jobs:
   update-lambda:
     runs-on: ubuntu-latest
 
-    permissions:
-      id-token: write
-      contents: read
-
     env:
       AWS_ACCOUNT_ID: ${{ inputs.aws_account_id }}
       AWS_REGION: ${{ inputs.aws_region }}

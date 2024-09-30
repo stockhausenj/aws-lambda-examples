@@ -20,6 +20,10 @@ jobs:
       image_tag: "stock"
       ecr_repository: $ECR_REPOSITORY
 
+    permissions:
+      id-token: write
+      contents: read
+
   third-party-api-sync-image:
     uses: ./.github/workflows/image-build.yaml
     with:
@@ -28,6 +32,10 @@ jobs:
       docker_build_dir: "third-party-sync/image"
       image_tag: "third-party-sync"
       ecr_repository: $ECR_REPOSITORY
+
+    permissions:
+      id-token: write
+      contents: read
 
   update-third-party-api-sync-lambda:
     needs: third-party-api-sync-image
@@ -38,3 +46,7 @@ jobs:
       aws_region: $AWS_REGION
       image_tag: "third-party-sync"
       lambda_function__name: "stocks_third_party_api"
+
+    permissions:
+      id-token: write
+      contents: read
