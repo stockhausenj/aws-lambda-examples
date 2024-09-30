@@ -1,8 +1,9 @@
-import boto3
-from botocore.exceptions import ClientError
 import json
 import os
+
+import boto3
 import requests
+from botocore.exceptions import ClientError
 
 
 def get_secret(secret_name):

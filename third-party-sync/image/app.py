@@ -1,12 +1,11 @@
-import boto3
-from botocore.exceptions import ClientError
 import json
 import os
-import psycopg2
-import requests
-
 from datetime import datetime
 
+import boto3
+import psycopg2
+import requests
+from botocore.exceptions import ClientError
 
 STOCK_SYMBOLS = [
     "AAPL",
