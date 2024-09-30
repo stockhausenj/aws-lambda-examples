@@ -73,14 +73,14 @@ resource "aws_apigatewayv2_integration" "stock" {
 }
 
 resource "aws_apigatewayv2_route" "stock" {
-  api_id    = aws_apigatewayv2_api.api.id
+  api_id    = aws_apigatewayv2_api.stocks.id
   route_key = "GET /stock"
 
   target = "integrations/${aws_apigatewayv2_integration.stock.id}"
 }
 
 resource "aws_apigatewayv2_stage" "stock" {
-  api_id      = aws_apigatewayv2_api.stock.id
+  api_id      = aws_apigatewayv2_api.stocks.id
   name        = "dev"
   auto_deploy = true
 }
@@ -90,5 +90,5 @@ resource "aws_lambda_permission" "stock" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.stock.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "${aws_apigatewayv2_api.stock.execution_arn}/*/*"
+  source_arn    = "${aws_apigatewayv2_api.stocks.execution_arn}/*/*"
 }
