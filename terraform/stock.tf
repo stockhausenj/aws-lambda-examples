@@ -1,11 +1,10 @@
-/*
 data "aws_ecr_image" "stock" {
   repository_name = data.terraform_remote_state.personal_aws.outputs.ecr_personal_test_repo_name
   image_tag       = "stock"
 }
 
 resource "aws_iam_role" "stock" {
-  name = "stocks_third_party_api_sync"
+  name = "stocks_stock"
 
   assume_role_policy = jsonencode({
     "Version": "2012-10-17",
@@ -27,7 +26,7 @@ resource "aws_iam_role_policy_attachment" "stock_basic_exec" {
 }
 
 resource "aws_iam_policy" "stock" {
-  name        = "LambdaSecretsAccessPolicy"
+  name        = "stocks_stock"
   description = "IAM policy for accessing secrets in AWS Secrets Manager"
   
   policy = jsonencode({
@@ -39,7 +38,6 @@ resource "aws_iam_policy" "stock" {
           "secretsmanager:GetSecretValue"
         ],
         "Resource": [
-          aws_secretsmanager_secret.db_access.arn,
           aws_secretsmanager_secret.third_party_api.arn
         ]
       }
@@ -62,14 +60,12 @@ resource "aws_lambda_function" "stock" {
 
   environment {
     variables = {
-      RDS_HOST                = aws_db_instance.stocks.address
-      RDS_DATABASE            = aws_db_instance.stocks.db_name
-      RDS_USER                = aws_db_instance.stocks.username
-      RDS_PASSWORD_ARN        = aws_secretsmanager_secret.db_access.arn 
       THIRD_PARTY_API_KEY_ARN = aws_secretsmanager_secret.third_party_api.arn
     }
   }
 }
+
+/*
 
 resource "aws_apigatewayv2_integration" "stock" {
   api_id                 = aws_apigatewayv2_api.stocks.id
