@@ -18,16 +18,16 @@ on:
         required: true
         type: string
 
+env:
+  AWS_ACCOUNT_ID: ${{ inputs.aws_account_id }}
+  AWS_REGION: ${{ inputs.aws_region }}
+  DOCKER_BUILD_DIR: ${{ inputs.docker_build_dir }}
+  IMAGE_TAG: ${{ inputs.image_tag }}
+  ECR_REPOSITORY: ${{ inputs.ecr_repository }}
+
 jobs:
   image-build:
     runs-on: ubuntu-latest
-
-    env:
-      AWS_ACCOUNT_ID: ${{ inputs.aws_account_id }}
-      AWS_REGION: ${{ inputs.aws_region }}
-      DOCKER_BUILD_DIR: ${{ inputs.docker_build_dir }}
-      IMAGE_TAG: ${{ inputs.image_tag }}
-      ECR_REPOSITORY: ${{ inputs.ecr_repository }}
 
     steps:
       - uses: actions/checkout@v3
