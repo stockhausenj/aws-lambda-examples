@@ -7,13 +7,13 @@ resource "aws_iam_role" "stock" {
   name = "stocks_stock"
 
   assume_role_policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
+    "Version" : "2012-10-17",
+    "Statement" : [
       {
-        "Action": "sts:AssumeRole",
-        "Effect": "Allow",
-        "Principal": {
-          "Service": "lambda.amazonaws.com"
+        "Action" : "sts:AssumeRole",
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : "lambda.amazonaws.com"
         }
       }
     ]
@@ -28,16 +28,16 @@ resource "aws_iam_role_policy_attachment" "stock_basic_exec" {
 resource "aws_iam_policy" "stock" {
   name        = "stocks_stock"
   description = "IAM policy for accessing secrets in AWS Secrets Manager"
-  
+
   policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
+    "Version" : "2012-10-17",
+    "Statement" : [
       {
-        "Effect": "Allow",
-        "Action": [
+        "Effect" : "Allow",
+        "Action" : [
           "secretsmanager:GetSecretValue"
         ],
-        "Resource": [
+        "Resource" : [
           aws_secretsmanager_secret.third_party_api.arn
         ]
       }
@@ -51,12 +51,12 @@ resource "aws_iam_role_policy_attachment" "stock" {
 }
 
 resource "aws_lambda_function" "stock" {
-  function_name    = "stock"
-  role             = aws_iam_role.stock.arn
-  package_type     = "Image"
-  image_uri        = data.aws_ecr_image.stock.image_uri
-  memory_size      = 128
-  timeout          = 60
+  function_name = "stock"
+  role          = aws_iam_role.stock.arn
+  package_type  = "Image"
+  image_uri     = data.aws_ecr_image.stock.image_uri
+  memory_size   = 128
+  timeout       = 60
 
   environment {
     variables = {
@@ -85,8 +85,9 @@ resource "aws_apigatewayv2_stage" "stock" {
   auto_deploy = true
 
   route_settings {
-    route_key             = "GET /stock"
-    throttling_rate_limit = 1 # RPS
+    route_key              = "GET /stock"
+    throttling_rate_limit  = 1 # RPS
+    throttling_burst_limit = 1 # RPS
   }
 }
 

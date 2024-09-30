@@ -7,13 +7,13 @@ resource "aws_iam_role" "third_party_api_sync" {
   name = "stocks_third_party_api_sync"
 
   assume_role_policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
+    "Version" : "2012-10-17",
+    "Statement" : [
       {
-        "Action": "sts:AssumeRole",
-        "Effect": "Allow",
-        "Principal": {
-          "Service": "lambda.amazonaws.com"
+        "Action" : "sts:AssumeRole",
+        "Effect" : "Allow",
+        "Principal" : {
+          "Service" : "lambda.amazonaws.com"
         }
       }
     ]
@@ -28,16 +28,16 @@ resource "aws_iam_role_policy_attachment" "third_party_api_sync_basic_exec" {
 resource "aws_iam_policy" "third_party_api_sync" {
   name        = "stocks_third_party_api_sync"
   description = "IAM policy for accessing secrets in AWS Secrets Manager"
-  
+
   policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
+    "Version" : "2012-10-17",
+    "Statement" : [
       {
-        "Effect": "Allow",
-        "Action": [
+        "Effect" : "Allow",
+        "Action" : [
           "secretsmanager:GetSecretValue"
         ],
-        "Resource": [
+        "Resource" : [
           aws_secretsmanager_secret.db_access.arn,
           aws_secretsmanager_secret.third_party_api.arn
         ]
@@ -52,19 +52,19 @@ resource "aws_iam_role_policy_attachment" "third_party_api_sync" {
 }
 
 resource "aws_lambda_function" "third_party_api_sync" {
-  function_name    = "stocks_third_party_api_sync"
-  role             = aws_iam_role.third_party_api_sync.arn
-  package_type     = "Image"
-  image_uri        = data.aws_ecr_image.third_party_api_sync.image_uri
-  memory_size      = 128
-  timeout          = 60
+  function_name = "stocks_third_party_api_sync"
+  role          = aws_iam_role.third_party_api_sync.arn
+  package_type  = "Image"
+  image_uri     = data.aws_ecr_image.third_party_api_sync.image_uri
+  memory_size   = 128
+  timeout       = 60
 
   environment {
     variables = {
       RDS_HOST                = aws_db_instance.stocks.address
       RDS_DATABASE            = aws_db_instance.stocks.db_name
       RDS_USER                = aws_db_instance.stocks.username
-      RDS_PASSWORD_ARN        = aws_secretsmanager_secret.db_access.arn 
+      RDS_PASSWORD_ARN        = aws_secretsmanager_secret.db_access.arn
       THIRD_PARTY_API_KEY_ARN = aws_secretsmanager_secret.third_party_api.arn
     }
   }
