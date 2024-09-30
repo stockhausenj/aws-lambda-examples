@@ -53,14 +53,14 @@ def handler(event, context):
 
     current_timestamp = datetime.utcnow()
     for symbol in STOCK_SYMBOLS:
-        url = f"https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={symbol}&interval=1min&apikey={alpha_vantage_api_key}"
+        url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={alpha_vantage_api_key}"
         response = requests.get(url)
         data = response.json()
 
-        if "Time Series (1min)" in data:
+        if "Time Series (Daily)" in data:
             # Parse the stock price (latest available data)
-            latest_timestamp = list(data["Time Series (1min)"].keys())[0]
-            latest_price = data["Time Series (1min)"][latest_timestamp]["1. open"]
+            latest_timestamp = list(data["Time Series (Daily)"].keys())[0]
+            latest_price = data["Time Series (Daily)"][latest_timestamp]["4. close"]
 
             with conn.cursor() as cur:
                 cur.execute(
