@@ -1,101 +1,42 @@
-name: Build Third-Party-Sync Container Image
-on:
-  workflow_dispatch:
-    inputs:
-      path_to_dockerfile:
-        description: Path to the dockerfile (default = 'Dockerfile')
-        default: "third-party-sync/image/Dockerfile"
-        type: string
-      docker_build_dir:
-        description: Docker build directory (default = '.')
-        default: "third-party-sync/image"
-        type: string
-      image_tag:
-        description: Tag to apply to images.
-        type: string
-        default: third-party-sync
-      lifecycle_policy_file:
-        description: Path to the lifecycle policy JSON file (default = 'policy.json')
-        default: "third-party-sync/image/policy.json"
-        type: string
-      github_iam_role:
-        description: Name of the IAM Role for adding access to ECR repo
-        default: "GitHubActionsRole"
-        type: string
-      aws_account_id:
-        description: AWS Account ID
-        default: "015059194123"
-        type: string
-      aws_region:
-        description: Target AWS Region
-        default: "us-east-1"
-        type: string
+name: memcached-testing
+
+on: [push]
+
+env:
+  AWS_ACCOUNT_ID: "015059194123"
+  AWS_REGION: "us-east-1"
+  ECR_REPOSITORY: "personal/test"
 
 # concurrency required to avoid terraform lock contention during ECR provisioning
 concurrency: ci-${{ github.repository }}-docker-pipeline
 
 jobs:
-  docker:
-    runs-on: ubuntu-latest
-
-    permissions:
-      id-token: write
-      contents: read
-
-    outputs:
-      image_tag: ${{ steps.build-publish.outputs.image_tag }}
-      full_image: ${{ steps.build-publish.outputs.full_image }}
-
+  stock-image:
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+      - uses: ./.github/workflows/image-build.yaml
         with:
-          role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/GitHubActionsRole
-          aws-region: ${{ inputs.aws_region }}
+          aws_account_id: $AWS_ACCOUNT_ID
+          aws_region: $AWS_REGION
+          docker_build_dir: "stock/image"
+          image_tag: "stock"
+          ecr_repository: $ECR_REPOSITORY
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-        with:
-          registries: ${{ inputs.aws_account_id }}
-
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-publish
-        shell: bash
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: "personal/test"
-          IMAGE_TAG: ${{ inputs.image_tag }}
-        run: |
-          docker build "${{ inputs.docker_build_dir }}" -f "${{ inputs.path_to_dockerfile }}" -t "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-          docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-          echo "IMAGE $IMAGE_TAG is pushed to $ECR_REGISTRY/$ECR_REPOSITORY"
-          echo "image_tag=$IMAGE_TAG" 
-          echo "full_image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-
-  update-lambda:
-    runs-on: ubuntu-latest
-
-    permissions:
-      id-token: write
-      contents: read
-
-    needs: docker
-
+  third-party-api-sync-image:
     steps:
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+      - uses: ./.github/workflows/image-build.yaml
         with:
-          role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/GitHubActionsRole
-          aws-region: ${{ inputs.aws_region }}
+          aws_account_id: $AWS_ACCOUNT_ID
+          aws_region: $AWS_REGION
+          docker_build_dir: "third-party-sync/image"
+          image_tag: "third-party-sync"
+          ecr_repository: $ECR_REPOSITORY
 
-      - name: Update AWS Lambda with new image
-        env:
-          LAMBDA_FUNCTION_NAME: "stocks_third_party_api"
-          ECR_IMAGE_URI: "015059194123.dkr.ecr.us-east-1.amazonaws.com/personal/test:third-party-sync"
-        run: |
-          aws lambda update-function-code \
-            --function-name $LAMBDA_FUNCTION_NAME \
-            --image-uri $ECR_IMAGE_URI
+  update-third-party-api-sync-lambda:
+    needs: third-party-api-sync-image
+    steps:
+      - uses: ./.github/workflows/update-lambda.yaml
+        with:
+          aws_account_id: $AWS_ACCOUNT_ID
+          aws_region: $AWS_REGION
+          image_tag: "third-party-sync"
+          lambda_function__name: "stocks_third_party_api"

@@ -30,7 +30,6 @@ def handler(event, context):
             "headers": {"Content-Type": "application/json"},
         }
 
-    # Fetch stock data from Alpha Vantage API
     url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={alpha_vantage_api_key}"
     response = requests.get(url)
 
