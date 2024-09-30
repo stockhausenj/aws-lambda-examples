@@ -84,7 +84,8 @@ resource "aws_apigatewayv2_stage" "stock" {
   name        = "dev"
   auto_deploy = true
 
-  route_settings = {
+  route_settings {
+    route_key             = "GET /stock"
     throttling_rate_limit = 1 # RPS
   }
 }
