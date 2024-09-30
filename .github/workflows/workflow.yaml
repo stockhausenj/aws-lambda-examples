@@ -2,11 +2,6 @@ name: memcached-testing
 
 on: [push]
 
-env:
-  AWS_ACCOUNT_ID: "015059194123"
-  AWS_REGION: "us-east-1"
-  ECR_REPOSITORY: "personal/test"
-
 # concurrency required to avoid terraform lock contention during ECR provisioning
 concurrency: ci-${{ github.repository }}-docker-pipeline
 
@@ -14,11 +9,11 @@ jobs:
   stock-image:
     uses: ./.github/workflows/image-build.yaml
     with:
-      aws_account_id: $AWS_ACCOUNT_ID
-      aws_region: $AWS_REGION
+      aws_account_id: "015059194123"
+      aws_region: "us-east-1"
       docker_build_dir: "stock/image"
       image_tag: "stock"
-      ecr_repository: $ECR_REPOSITORY
+      ecr_repository: "personal/test"
 
     permissions:
       id-token: write
@@ -27,11 +22,11 @@ jobs:
   third-party-api-sync-image:
     uses: ./.github/workflows/image-build.yaml
     with:
-      aws_account_id: $AWS_ACCOUNT_ID
-      aws_region: $AWS_REGION
+      aws_account_id: "015059194123"
+      aws_region: "us-east-1"
       docker_build_dir: "third-party-sync/image"
       image_tag: "third-party-sync"
-      ecr_repository: $ECR_REPOSITORY
+      ecr_repository: "personal/test"
 
     permissions:
       id-token: write
@@ -42,8 +37,8 @@ jobs:
 
     uses: ./.github/workflows/update-lambda.yaml
     with:
-      aws_account_id: $AWS_ACCOUNT_ID
-      aws_region: $AWS_REGION
+      aws_account_id: "015059194123"
+      aws_region: "us-east-1"
       image_tag: "third-party-sync"
       lambda_function_name: "stocks_third_party_api"
 

@@ -18,6 +18,10 @@ on:
         required: true
         type: string
 
+env:
+  AWS_ACCOUNT_ID: ${{ inputs.aws_account_id }}
+  AWS_REGION: ${{ inputs.aws_region }}
+
 jobs:
   image-build:
     runs-on: ubuntu-latest
@@ -28,8 +32,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::${{ inputs.aws_account_id }}:role/GitHubActionsRole
-          aws-region: ${{ inputs.aws_region }}
+          role-to-assume: arn:aws:iam::$AWS_ACCOUNT_ID:role/GitHubActionsRole
+          aws-region: $AWS_REGION
 
       - name: Login to Amazon ECR
         id: login-ecr
