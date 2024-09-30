@@ -12,31 +12,29 @@ concurrency: ci-${{ github.repository }}-docker-pipeline
 
 jobs:
   stock-image:
-    steps:
-      - uses: ./.github/workflows/image-build.yaml
-        with:
-          aws_account_id: $AWS_ACCOUNT_ID
-          aws_region: $AWS_REGION
-          docker_build_dir: "stock/image"
-          image_tag: "stock"
-          ecr_repository: $ECR_REPOSITORY
+    uses: ./.github/workflows/image-build.yaml
+    with:
+      aws_account_id: $AWS_ACCOUNT_ID
+      aws_region: $AWS_REGION
+      docker_build_dir: "stock/image"
+      image_tag: "stock"
+      ecr_repository: $ECR_REPOSITORY
 
   third-party-api-sync-image:
-    steps:
-      - uses: ./.github/workflows/image-build.yaml
-        with:
-          aws_account_id: $AWS_ACCOUNT_ID
-          aws_region: $AWS_REGION
-          docker_build_dir: "third-party-sync/image"
-          image_tag: "third-party-sync"
-          ecr_repository: $ECR_REPOSITORY
+    uses: ./.github/workflows/image-build.yaml
+    with:
+      aws_account_id: $AWS_ACCOUNT_ID
+      aws_region: $AWS_REGION
+      docker_build_dir: "third-party-sync/image"
+      image_tag: "third-party-sync"
+      ecr_repository: $ECR_REPOSITORY
 
   update-third-party-api-sync-lambda:
     needs: third-party-api-sync-image
-    steps:
-      - uses: ./.github/workflows/update-lambda.yaml
-        with:
-          aws_account_id: $AWS_ACCOUNT_ID
-          aws_region: $AWS_REGION
-          image_tag: "third-party-sync"
-          lambda_function__name: "stocks_third_party_api"
+
+    uses: ./.github/workflows/update-lambda.yaml
+    with:
+      aws_account_id: $AWS_ACCOUNT_ID
+      aws_region: $AWS_REGION
+      image_tag: "third-party-sync"
+      lambda_function__name: "stocks_third_party_api"
