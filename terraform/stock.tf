@@ -1,3 +1,12 @@
+resource "aws_elasticache_cluster" "stock" {
+  cluster_id           = "stocks-stock"
+  engine               = "memcached"
+  node_type            = "cache.t4g.micro"
+  num_cache_nodes      = 1
+  parameter_group_name = "default.memcached1.6"
+  port                 = 11211
+}
+
 data "aws_ecr_image" "stock" {
   repository_name = data.terraform_remote_state.personal_aws.outputs.ecr_personal_test_repo_name
   image_tag       = "stock"
@@ -61,6 +70,7 @@ resource "aws_lambda_function" "stock" {
   environment {
     variables = {
       THIRD_PARTY_API_KEY_ARN = aws_secretsmanager_secret.third_party_api.arn
+      MEMCACHED_ENDPOINT = aws_elasticache_cluster.stock.cluster_address
     }
   }
 }
