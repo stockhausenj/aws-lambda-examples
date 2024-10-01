@@ -2,6 +2,7 @@ import json
 import os
 
 import boto3
+import pylibmc
 import requests
 from botocore.exceptions import ClientError
 
@@ -19,8 +20,19 @@ def get_secret(secret_name):
         raise e
 
 
-def handler(event, context):
+def api_request(symbol):
     alpha_vantage_api_key = get_secret(os.getenv("THIRD_PARTY_API_KEY_ARN"))
+    url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={alpha_vantage_api_key}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.json(), 200
+    elif response.status_code == 404:
+        return {}, 404
+    else:
+        return {}, 500
+
+
+def handler(event, context):
     symbol = event.get("queryStringParameters", {}).get("symbol", None)
 
     if not symbol:
@@ -30,27 +42,34 @@ def handler(event, context):
             "headers": {"Content-Type": "application/json"},
         }
 
-    url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={alpha_vantage_api_key}"
-    response = requests.get(url)
+    memcached_client = pylibmc.Client([os.getenv("MEMCACHED_ENDPOINT")], binary=True)
+    cached_response = memcached_client.get(symbol)
 
-    if response.status_code != 200:
-        return {
-            "statusCode": 500,
-            "body": json.dumps({"error": "Error fetching stock data"}),
-            "headers": {"Content-Type": "application/json"},
-        }
+    symbol_data = {}
 
-    data = response.json()
-
-    if "Error Message" in data:
-        return {
-            "statusCode": 404,
-            "body": json.dumps({"error": f"Stock symbol {symbol} not found"}),
-            "headers": {"Content-Type": "application/json"},
-        }
+    if cached_response:
+        print("Cache hit: Returning cached response")
+        symbol_data = json.loads((cached_response))
+    else:
+        print("Cache miss: Fetching from API")
+        symbol_data, response_code = api_request(symbol)
+        if response_code == 200:
+            memcached_client.set(symbol, json.dumps(symbol_data), time=3600)
+        elif response_code == 404:
+            return {
+                "statusCode": 404,
+                "body": json.dumps({"error": f"Stock symbol {symbol} not found"}),
+                "headers": {"Content-Type": "application/json"},
+            }
+        else:
+            return {
+                "statusCode": 500,
+                "body": json.dumps({"error": "Error fetching stock data"}),
+                "headers": {"Content-Type": "application/json"},
+            }
 
     return {
         "statusCode": 200,
-        "body": json.dumps(data),
+        "body": json.dumps(symbol_data),
         "headers": {"Content-Type": "application/json"},
     }
