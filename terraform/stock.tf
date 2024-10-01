@@ -59,6 +59,22 @@ resource "aws_iam_role_policy_attachment" "stock" {
   policy_arn = aws_iam_policy.stock.arn
 }
 
+resource "aws_security_group" "stock_lambda" {
+  name        = "stock-lambda-sg"
+  description = "Security group for stock Lambda."
+
+  tags = {
+    Name = "stock-lambda-sg"
+  }
+}
+
+resource "aws_vpc_security_group_egress_rule" "stock_lambda" {
+  security_group_id = aws_security_group.stock_lambda.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  ip_protocol = "-1"
+}
+
 resource "aws_lambda_function" "stock" {
   function_name = "stock"
   role          = aws_iam_role.stock.arn
@@ -66,6 +82,11 @@ resource "aws_lambda_function" "stock" {
   image_uri     = data.aws_ecr_image.stock.image_uri
   memory_size   = 128
   timeout       = 60
+
+  vpc_config {
+    subnet_ids         = data.aws_subnets.default_subnets.ids
+    security_group_ids = [aws_security_group.stock_lambda.id]
+  }
 
   environment {
     variables = {
