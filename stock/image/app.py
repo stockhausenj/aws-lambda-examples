@@ -24,6 +24,7 @@ def api_request(symbol):
     alpha_vantage_api_key = get_secret(os.getenv("THIRD_PARTY_API_KEY_ARN"))
     url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={alpha_vantage_api_key}"
     response = requests.get(url)
+    print(f"THIRD_PARTY API Response: {response.status_code}")
     if response.status_code == 200:
         return response.json(), 200
     elif response.status_code == 404:
@@ -54,7 +55,9 @@ def handler(event, context):
         print("Cache miss: Fetching from API")
         symbol_data, response_code = api_request(symbol)
         if response_code == 200:
+            print(f"Adding to cache: {symbol_data}")
             memcached_client.set(symbol, json.dumps(symbol_data), time=3600)
+            print(f"Added to cache: {symbol_data}")
         elif response_code == 404:
             return {
                 "statusCode": 404,
