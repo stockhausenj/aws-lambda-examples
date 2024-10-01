@@ -34,8 +34,35 @@ resource "aws_iam_role_policy_attachment" "stock_basic_exec" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-resource "aws_iam_policy" "stock" {
-  name        = "stocks_stock"
+resource "aws_iam_policy" "stock_ec2" {
+  name        = "stocks_stock_ec2"
+  description = "IAM policy for EC2"
+
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Effect" : "Allow",
+        "Action" : [
+					"ec2:CreateNetworkInterface",
+					"ec2:DescribeNetworkInterfaces",
+					"ec2:DeleteNetworkInterface",
+					"ec2:AttachNetworkInterface",
+					"ec2:DetachNetworkInterface"
+        ],
+        "Resource" : "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "stock_ec2" {
+  role       = aws_iam_role.stock.name
+  policy_arn = aws_iam_policy.stock_ec2.arn
+}
+
+resource "aws_iam_policy" "stock_secrets" {
+  name        = "stocks_stock_secrets"
   description = "IAM policy for accessing secrets in AWS Secrets Manager"
 
   policy = jsonencode({
@@ -54,9 +81,9 @@ resource "aws_iam_policy" "stock" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "stock" {
+resource "aws_iam_role_policy_attachment" "stock_secrets" {
   role       = aws_iam_role.stock.name
-  policy_arn = aws_iam_policy.stock.arn
+  policy_arn = aws_iam_policy.stock_secrets.arn
 }
 
 resource "aws_security_group" "stock_lambda" {
