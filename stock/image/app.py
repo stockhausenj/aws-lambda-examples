@@ -21,7 +21,12 @@ def get_secret(secret_name):
 
 
 def api_request(symbol):
-    print("Trying THIRD_PARTY_API")
+    print(
+        f"Trying THIRD_PARTY_API for this symbol: {symbol}. Which is of this type: {type(symbol)}"
+    )
+    print(
+        f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey="
+    )
     alpha_vantage_api_key = get_secret(os.getenv("THIRD_PARTY_API_KEY_ARN"))
     url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={alpha_vantage_api_key}"
     response = requests.get(url)
