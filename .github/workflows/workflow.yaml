@@ -3,6 +3,7 @@ name: memcached-testing
 on:
   push:
     paths:
+      - ".github/workflows/**"
       - "api-gw-nat/**"
       - "cron/**"
 
