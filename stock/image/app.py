@@ -57,7 +57,9 @@ def handler(event, context):
         symbol_data, response_code = api_request(symbol)
         if response_code == 200:
             print(f"Adding to cache: {symbol_data}")
-            memcached_client.set(symbol, json.dumps(symbol_data), time=3600)
+            memcached_client.set(
+                symbol, json.dumps(symbol_data), time=86400
+            )  # Expire after 24hr
             print(f"Added to cache: {symbol_data}")
         elif response_code == 404:
             return {
