@@ -8,7 +8,9 @@ from botocore.exceptions import ClientError
 
 
 def get_secret(secret_name):
-    client = boto3.client("secretsmanager")
+    client = boto3.client(
+        "secretsmanager", endpoint_url="secretsmanager.us-east-1.amazonaws.com"
+    )
     try:
         response = client.get_secret_value(SecretId=secret_name)
         if "SecretString" in response:
@@ -21,16 +23,9 @@ def get_secret(secret_name):
 
 
 def api_request(symbol):
-    print(
-        f"Trying THIRD_PARTY_API for this symbol: {symbol}. Which is of this type: {type(symbol)}"
-    )
     alpha_vantage_api_key = get_secret(os.getenv("THIRD_PARTY_API_KEY_ARN"))
-    print(
-        f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={alpha_vantage_api_key}"
-    )
     url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={alpha_vantage_api_key}"
     response = requests.get(url)
-    print(f"THIRD_PARTY API Response: {response.status_code}")
     if response.status_code == 200:
         return response.json(), 200
     elif response.status_code == 404:
