@@ -1,9 +1,10 @@
 name: memcached-testing
 
-on: [push]
-
-# concurrency required to avoid terraform lock contention during ECR provisioning
-concurrency: ci-${{ github.repository }}-docker-pipeline
+on:
+  push:
+    paths:
+      - "stock/**"
+      - "third-party-sync/**"
 
 jobs:
   stock-image:
