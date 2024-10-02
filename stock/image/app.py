@@ -8,9 +8,7 @@ from botocore.exceptions import ClientError
 
 
 def get_secret(secret_name):
-    client = boto3.client(
-        "secretsmanager", endpoint_url="secretsmanager.us-east-1.amazonaws.com"
-    )
+    client = boto3.client("secretsmanager", region_name="us-east-1")
     try:
         response = client.get_secret_value(SecretId=secret_name)
         if "SecretString" in response:
