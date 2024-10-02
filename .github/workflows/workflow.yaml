@@ -14,7 +14,7 @@ jobs:
       aws_region: "us-east-1"
       docker_build_dir: "api-gw-nat/image"
       image_tag: "latest"
-      ecr_repository: "personal/api-gw-nat"
+      ecr_repository: "personal/api_gw_nat"
 
     permissions:
       id-token: write
