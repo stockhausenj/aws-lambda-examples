@@ -31,6 +31,7 @@ jobs:
         env:
           ECR_IMAGE_URI: "015059194123.dkr.ecr.us-east-1.amazonaws.com/personal/test:${{ inputs.image_tag }}"
         run: |
+          sleep 30
           aws lambda update-function-code \
             --function-name ${{ inputs.lambda_function_name }} \
             --image-uri $ECR_IMAGE_URI

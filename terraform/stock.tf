@@ -103,7 +103,7 @@ resource "aws_vpc_security_group_egress_rule" "stock_lambda" {
 }
 
 resource "aws_lambda_function" "stock" {
-  function_name = "stock"
+  function_name = "stocks_stock"
   role          = aws_iam_role.stock.arn
   package_type  = "Image"
   image_uri     = data.aws_ecr_image.stock.image_uri
