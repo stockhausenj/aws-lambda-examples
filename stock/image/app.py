@@ -1,13 +1,14 @@
 import json
 import os
 
-import boto3
+# import boto3
 import pylibmc
 import requests
-from botocore.config import Config
-from botocore.exceptions import ClientError
 
+# from botocore.config import Config
+# from botocore.exceptions import ClientError
 
+"""
 def get_secret(secret_name):
     boto_config = Config(region_name="us-east-1")
     client = boto3.client("secretsmanager", config=boto_config)
@@ -20,10 +21,11 @@ def get_secret(secret_name):
     except ClientError as e:
         print(f"Error retrieving secret {secret_name}: {e}")
         raise e
+"""
 
 
 def api_request(symbol):
-    alpha_vantage_api_key = get_secret(os.getenv("THIRD_PARTY_API_KEY_ARN"))
+    alpha_vantage_api_key = os.getenv("THIRD_PARTY_API_KEY_ARN")
     url = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={alpha_vantage_api_key}"
     response = requests.get(url)
     if response.status_code == 200:
