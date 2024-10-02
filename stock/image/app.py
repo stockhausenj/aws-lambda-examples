@@ -4,11 +4,13 @@ import os
 import boto3
 import pylibmc
 import requests
+from botocore.config import Config
 from botocore.exceptions import ClientError
 
 
 def get_secret(secret_name):
-    client = boto3.client("secretsmanager", region_name="us-east-1")
+    boto_config = Config(region_name="us-east-1")
+    client = boto3.client("secretsmanager", config=boto_config)
     try:
         response = client.get_secret_value(SecretId=secret_name)
         if "SecretString" in response:
