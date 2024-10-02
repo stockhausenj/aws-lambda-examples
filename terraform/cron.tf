@@ -74,7 +74,7 @@ resource "aws_db_instance" "cron" {
 }
 
 resource "aws_secretsmanager_secret" "cron_db" {
-  name = "db_access"
+  name = "cron_db_access"
 }
 
 resource "aws_secretsmanager_secret_version" "cron_db_pw" {
