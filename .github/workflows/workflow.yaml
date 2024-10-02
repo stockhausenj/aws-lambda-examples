@@ -42,7 +42,7 @@ jobs:
       aws_account_id: "015059194123"
       aws_region: "us-east-1"
       image_tag: "stock"
-      lambda_function_name: "stock"
+      lambda_function_name: "stocks_stock"
 
     permissions:
       id-token: write
