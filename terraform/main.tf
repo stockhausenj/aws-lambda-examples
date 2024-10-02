@@ -44,3 +44,11 @@ data "aws_subnets" "private_subnets" {
     kind = "private"
   }
 }
+resource "aws_secretsmanager_secret" "external_api" {
+  name = "external_api"
+}
+
+resource "aws_secretsmanager_secret_version" "external_api_key" {
+  secret_id     = aws_secretsmanager_secret.external_api.id
+  secret_string = var.external_api_key
+}

@@ -3,62 +3,62 @@ name: memcached-testing
 on:
   push:
     paths:
-      - "stock/**"
-      - "third-party-sync/**"
+      - "api-gw-nat/**"
+      - "cron/**"
 
 jobs:
-  stock-image:
+  api-gw-nat-image:
     uses: ./.github/workflows/image-build.yaml
     with:
       aws_account_id: "015059194123"
       aws_region: "us-east-1"
-      docker_build_dir: "stock/image"
-      image_tag: "stock"
-      ecr_repository: "personal/test"
+      docker_build_dir: "api-gw-nat/image"
+      image_tag: "latest"
+      ecr_repository: "personal/api-gw-nat"
 
     permissions:
       id-token: write
       contents: read
 
 
-  third-party-api-sync-image:
+  cron-image:
     uses: ./.github/workflows/image-build.yaml
     with:
       aws_account_id: "015059194123"
       aws_region: "us-east-1"
-      docker_build_dir: "third-party-sync/image"
-      image_tag: "third-party-sync"
-      ecr_repository: "personal/test"
+      docker_build_dir: "cron/image"
+      image_tag: "latest"
+      ecr_repository: "personal/cron"
 
     permissions:
       id-token: write
       contents: read
 
 
-  update-stock-lambda:
-    needs: stock-image
+  update-api-gw-nat-lambda:
+    needs: api-gw-nat-image
 
     uses: ./.github/workflows/update-lambda.yaml
     with:
       aws_account_id: "015059194123"
       aws_region: "us-east-1"
-      image_tag: "stock"
-      lambda_function_name: "stocks_stock"
+      image_tag: "latest"
+      lambda_function_name: "api_gw_nat"
 
     permissions:
       id-token: write
       contents: read
 
 
-  update-third-party-api-sync-lambda:
-    needs: third-party-api-sync-image
+  update-cron-lambda:
+    needs: cron-image
 
     uses: ./.github/workflows/update-lambda.yaml
     with:
       aws_account_id: "015059194123"
       aws_region: "us-east-1"
-      image_tag: "third-party-sync"
-      lambda_function_name: "stocks_third_party_api_sync"
+      image_tag: "latest"
+      lambda_function_name: "cron"
 
     permissions:
       id-token: write
