@@ -35,6 +35,13 @@ resource "aws_apigatewayv2_api" "api_gw_nat" {
   protocol_type = "HTTP"
 }
 
+resource "aws_elasticache_subnet_group" "api_gw_nat" {
+  name       = "api_gw_nat"
+  subnet_ids = data.aws_subnets.private_subnets.ids
+
+  description = "ElastiCache Subnet Group for private subnets"
+}
+
 resource "aws_elasticache_cluster" "api_gw_nat" {
   cluster_id           = "api-gw-nat"
   engine               = "memcached"
@@ -42,6 +49,7 @@ resource "aws_elasticache_cluster" "api_gw_nat" {
   num_cache_nodes      = 1
   parameter_group_name = "default.memcached1.6"
   port                 = 11211
+  subnet_group_name    = aws_elasticache_subnet_group.api_gw_nat.name
 }
 
 data "aws_ecr_image" "api_gw_nat" {
