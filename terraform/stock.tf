@@ -111,7 +111,7 @@ resource "aws_lambda_function" "stock" {
   timeout       = 60
 
   vpc_config {
-    subnet_ids         = data.aws_subnets.default_subnets.ids
+    subnet_ids         = data.aws_subnets.private_subnets.ids
     security_group_ids = [aws_security_group.stock_lambda.id]
   }
 
