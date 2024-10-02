@@ -44,11 +44,11 @@ resource "aws_iam_policy" "stock_ec2" {
       {
         "Effect" : "Allow",
         "Action" : [
-					"ec2:CreateNetworkInterface",
-					"ec2:DescribeNetworkInterfaces",
-					"ec2:DeleteNetworkInterface",
-					"ec2:AttachNetworkInterface",
-					"ec2:DetachNetworkInterface"
+          "ec2:CreateNetworkInterface",
+          "ec2:DescribeNetworkInterfaces",
+          "ec2:DeleteNetworkInterface",
+          "ec2:AttachNetworkInterface",
+          "ec2:DetachNetworkInterface"
         ],
         "Resource" : "*"
       }
