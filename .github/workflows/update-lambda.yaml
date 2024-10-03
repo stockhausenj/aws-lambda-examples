@@ -12,6 +12,9 @@ on:
       image_tag:
         required: true
         type: string
+      ecr_repository:
+        required: true
+        type: string
       lambda_function_name:
         required: true
         type: string
@@ -29,7 +32,7 @@ jobs:
 
       - name: Update AWS Lambda with new image
         env:
-          ECR_IMAGE_URI: "015059194123.dkr.ecr.us-east-1.amazonaws.com/personal/test:${{ inputs.image_tag }}"
+          ECR_IMAGE_URI: "015059194123.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.ecr_repository }}:${{ inputs.image_tag }}"
         run: |
           sleep 30
           aws lambda update-function-code \
