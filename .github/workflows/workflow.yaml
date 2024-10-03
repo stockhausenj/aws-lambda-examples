@@ -23,6 +23,7 @@ jobs:
 
 
   cron-image:
+    if: false
     uses: ./.github/workflows/image-build.yaml
     with:
       aws_account_id: "015059194123"
@@ -53,6 +54,7 @@ jobs:
 
 
   update-cron-lambda:
+    if: false
     needs: cron-image
 
     uses: ./.github/workflows/update-lambda.yaml
