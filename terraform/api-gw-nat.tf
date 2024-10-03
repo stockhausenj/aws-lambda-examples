@@ -36,7 +36,7 @@ resource "aws_apigatewayv2_api" "api_gw_nat" {
 }
 
 resource "aws_elasticache_subnet_group" "api_gw_nat" {
-  name       = "api_gw_nat"
+  name       = "api-gw-nat"
   subnet_ids = data.aws_subnets.private_subnets.ids
 
   description = "ElastiCache Subnet Group for private subnets"
