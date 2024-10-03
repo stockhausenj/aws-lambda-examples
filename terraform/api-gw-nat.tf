@@ -30,6 +30,18 @@ resource "aws_ecr_lifecycle_policy" "api_gw_nat" {
 EOF
 }
 
+resource "aws_security_group" "api_gw_nat_memcached" {
+  name        = "api-gw-nat-memcached"
+  description = "Security group for api_gw_nat Memcached."
+}
+
+resource "aws_vpc_security_group_ingress_rule" "api_gw_nat_memcached" {
+  security_group_id = aws_security_group.api_gw_nat_memcached.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  ip_protocol = "-1"
+}
+
 resource "aws_apigatewayv2_api" "api_gw_nat" {
   name          = "api_gw_nat"
   protocol_type = "HTTP"
@@ -50,6 +62,7 @@ resource "aws_elasticache_cluster" "api_gw_nat" {
   parameter_group_name = "default.memcached1.6"
   port                 = 11211
   subnet_group_name    = aws_elasticache_subnet_group.api_gw_nat.name
+  security_group_ids   = [aws_security_group.api_gw_nat_memcached.id]
 }
 
 data "aws_ecr_image" "api_gw_nat" {
@@ -159,7 +172,7 @@ resource "aws_lambda_function" "api_gw_nat" {
   environment {
     variables = {
       THIRD_PARTY_API_KEY_ARN = aws_secretsmanager_secret.external_api.arn
-      MEMCACHED_ENDPOINT = aws_elasticache_cluster.api_gw_nat.cluster_address
+      MEMCACHED_ENDPOINT      = aws_elasticache_cluster.api_gw_nat.cluster_address
     }
   }
 }
